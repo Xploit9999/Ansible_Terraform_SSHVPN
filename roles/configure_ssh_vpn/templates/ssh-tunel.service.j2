@@ -3,9 +3,9 @@ Description=SSH Tunnel VPN en {{ tunel_name }}
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/ssh -o StrictHostKeyChecking=no -w {{ tunel_any }}:{{ tunel_any }} {{ ssh_user }}@{{ server_ip }} true
+ExecStart=/usr/bin/ssh -o StrictHostKeyChecking=no -w {{ tunel_any }}:{{ tunel_any }} {{ user }}@{{ server_ip }} true
 Restart=always
-User={{ ssh_user }}
+User={{ user }}
 
 [Install]
 WantedBy=multi-user.target

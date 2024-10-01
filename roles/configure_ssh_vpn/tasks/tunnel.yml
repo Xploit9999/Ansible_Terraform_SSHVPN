@@ -7,7 +7,7 @@
     group: root
   vars:
     tunel_name: "{{ tun_name }}"
-    ssh_user: "yagami"
+    user: "{{ ssh_user }}"
     server_ip: "{{ server }}"
     tunel_any: "{{ tun_name[-1] }}"
   delegate_to: "{{ cliente }}"
