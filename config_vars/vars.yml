@@ -1,0 +1,58 @@
+---
+__tun_name: tun0
+__tun_ip_server: 10.0.0.3/24
+__tun_ip_client: 10.0.0.4/24
+__ssh_user: adm
+__cliente: localhost
+
+# Variables para la creación del proyecto
+nombre_proyecto: "SSHVPN"
+descripcion_proyecto: "Creación de droplet que se usara para servidor VPN"
+proposito: "sshvpn master"
+ambiente: "development"
+
+# Variables para la creación del VPC 
+nombre_vpc: "mi-vpn-vpc-test"
+region: "nyc3"
+ip_rango: "10.10.50.0/24"
+
+# Variables para la creación del droplet
+droplets:
+  - hostname: "VPN-master"
+    recursos: "s-1vcpu-1gb"
+    region: "nyc3"
+    so: "centos-stream-9-x64"
+
+# Variables para la creación de los usuarios
+usuarios:
+  - nombre: "adm"
+    descripcion: "admin user"
+    grupo: "admgrp"
+    pass: "$6$XGPXU9OG5aldbR6p$vAXFSTFN"
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    ssh_key: "<tu llave publica de ssh>"
+
+# Paquetes a instalar
+paquetes:
+  - iotop
+  - perf
+  - sysstat
+  - firewalld
+
+nombre_fw: "mi-firewall"
+reglas_firewall:
+  - tipo: "outbound"
+    protocolo: "tcp"
+    puertos: "1-65535"
+    origen: "0.0.0.0/0"
+  - tipo: "outbound"
+    protocolo: "udp"
+    puertos: "1-65535"
+    origen: "0.0.0.0/0"
+# Variable para habilitar actualización entera del S.O
+actualizar: true
+# Variable de la llave ssh previamente configurada en DigitalOcean
+ssh_key: "<nombre de la llave creada en digitalocean>"
+# Variable de la plantilla de aprovisionamiento, si se tiene otra, por favor colocarla.
+aprovisionamiento: "provisioning.yaml.tpl"
+...
