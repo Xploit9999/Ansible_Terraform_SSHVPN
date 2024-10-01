@@ -1,0 +1,22 @@
+[connection]
+id={{ tun_name }}
+type=tun
+interface-name={{ tun_name }}
+
+[tun]
+
+[ipv4]
+{% if target in groups['server'] %}
+address1={{ tun_ip_server }}
+{% elif target in groups['client'] %}
+address1={{ tun_ip_client }}
+routes1=0.0.0.0/0,{{ tun_ip_server }}
+route-metric=50
+{% endif %}
+method=manual
+
+[ipv6]
+addr-gen-mode=default
+method=disabled
+
+[proxy]

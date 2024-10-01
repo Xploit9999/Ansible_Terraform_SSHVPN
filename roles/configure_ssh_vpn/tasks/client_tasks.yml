@@ -1,0 +1,36 @@
+---
+- block:
+  - name: Configuración SSHVPN | Se colecta fact en especifico
+    setup:
+      gather_subset:
+        - '!all'
+        - '!min'
+        - network
+    async: 100
+    poll: 1
+
+  - name: Configuración SSHVPN | Se obtiene la interface principal
+    set_fact:
+      iface_main: "{{ ansible_default_ipv4.interface }}"
+
+  - name: Configuración SSHVPN | Se busca archivo de configuración sobre la interface principal
+    find:
+      paths: /etc/NetworkManager/system-connections
+      contains: "{{ iface_main }}"
+      file_type: file
+      read_whole_file: true
+      recurse: true
+    register: content
+
+  - name: Configuración SSHVPN | Se captura archivo de interface principal
+    set_fact:
+      iface_file_main: "{{ content.files | map(attribute='path') | join }}"
+
+  - name: Configuración SSHVPN | Se modifica archivo de interface principal adicionandole ruta hacia el droplet
+    lineinfile:
+      path: "{{ iface_file_main }}"
+      line: "routes1={{ server }},{{ ansible_default_ipv4.gateway }}"
+      insertafter: '^\[ipv4\]'
+
+  delegate_to: "{{ cliente }}"
+  run_once: true

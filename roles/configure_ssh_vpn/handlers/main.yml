@@ -1,0 +1,31 @@
+---
+# handlers file for configure_ssh_vpn
+- systemd:
+    name: sshd
+    state: restarted
+  listen: "Reiniciar servicio ssh"
+
+- name: Recargar systemd
+  systemd:
+    daemon_reload: true
+  delegate_to: "{{ item }}"
+  loop:
+    - "{{ server }}"
+    - "{{ cliente }}"
+
+- name: Reiniciar servicio de NetworkManager
+  systemd:
+    name: NetworkManager
+    state: restarted 
+  delegate_to: "{{ item }}"
+  loop:
+    - "{{ server }}"
+    - "{{ cliente }}"
+
+- name: Habilitar e iniciar servicio de tunel
+  systemd:
+    name: ssh-tunnel
+    state: started
+    enabled: true
+  delegate_to: "{{ cliente }}"
+...

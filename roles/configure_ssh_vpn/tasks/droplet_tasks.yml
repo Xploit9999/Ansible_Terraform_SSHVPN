@@ -1,0 +1,41 @@
+---  
+- name: Configuración SSHVPN | Se espera que el droplet tenga conexión por SSH para proseguir con su configuración
+  wait_for_connection:
+    timeout: 300
+    delay: 10
+
+- name: Configuración SSHVPN | Se habilita tunnel y tcp forwarding 
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    line: "PermitTunnel yes\nAllowTcpForwarding yes"
+  notify: "Reiniciar servicio ssh"
+
+- meta: flush_handlers
+
+- name: Configuración SSHVPN | Se parametriza regla de kernel para habilitación de redireccionamiento de trafico por IPv4
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    state: present
+    sysctl_set: true
+    reload: true
+
+- name: Configuración SSHVPN | Se espera a que el paquete de firewalld haya sido instalado exitosamente por el cloud-init.
+  wait_for:
+    path: /usr/lib/systemd/system/firewalld.service
+    timeout: 300
+
+- name: Configuración SSHVPN | Se habilita e inicia el servicio de firewall
+  systemd:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Configuración SSHVPN | Se configura regla de enmascaramiento en zona publica para el trafico entrante.
+  firewalld:
+    zone: public
+    masquerade: true
+    state: enabled
+    permanent: true
+    immediate: true
+...

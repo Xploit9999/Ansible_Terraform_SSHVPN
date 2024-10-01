@@ -1,0 +1,7 @@
+---
+# vars file for configure_ssh_vpn
+tun_name: tun0
+tun_ip_client: "10.0.0.4/24"
+tun_ip_server: "10.0.0.3/24"
+server: xxx.xxx.xxx.xx
+cliente: localhost

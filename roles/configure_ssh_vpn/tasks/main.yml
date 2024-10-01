@@ -1,0 +1,25 @@
+---
+# tasks file for configure_ssh_vpn
+- name: Configuración SSHVPN | Se crea grupo de server
+  add_host:
+    hostname: "{{ server }}"
+    groups: server
+    ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
+  when: server is defined
+
+- name: Configuración SSHVPN | Se crea grupo de cliente
+  add_host:
+    hostname: "{{ cliente }}"
+    groups: client
+    ansible_connection: local
+  when: cliente is defined
+
+- name: Configuración SSHVPN | Se configura servidor cliente 
+  include_tasks: client_tasks.yml
+
+- name: Configuración SSHVPN | Se configura droplet
+  include_tasks: droplet_tasks.yml
+
+- name: Configuración SSHVPN | Configuración de servicio de tunel y se establece la conexión.
+  include_tasks: tunnel.yml
+...
