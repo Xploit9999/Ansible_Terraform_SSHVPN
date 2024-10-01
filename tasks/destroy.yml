@@ -1,8 +1,10 @@
 ---
+- include_vars: ../config_vars/vars.yml
+
 - block:
   - name: Destruir & Revertir | Se elimina conexión del tunel 
     nmcli:
-      conn_name: tun0
+      conn_name: "{{ __tun_name }}"
       state: absent
 
   - name: Destruir & Revertir | Se recolecta fact en especifico
