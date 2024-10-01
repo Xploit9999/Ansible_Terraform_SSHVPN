@@ -1,0 +1,28 @@
+---
+- include_vars: ../config_vars/vars.yml
+
+- name: Creación VPN Ansible - Terraform | Obtener IP publica local para regla de firewall en el droplet
+  uri:
+    url: https://ifconfig.me/ip
+    return_content: true
+  register: ip_public
+
+- name: Creacion VPN Ansible - Terraform | Se modela tfvars 
+  template:
+    src: ../templates/terraform.tfvars.j2
+    dest: crear_recursos/terraform.tfvars
+  vars:
+    publica: "{{ ip_public.content }}"
+
+- name: Creacion VPN Ansible - Terraform | Creación de recursos en DigitalOcean con Terraform
+  terraform:
+    project_path: crear_recursos/
+    state: present
+    force_init: true
+  register: tf
+  become: false
+
+- name: Creacion VPN Ansible - Terraform | Se captura ip del droplet creado.
+  set_fact:
+    server: "{{ tf.outputs.droplets_ips.value | join }}"
+...

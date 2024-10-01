@@ -1,0 +1,63 @@
+nombre_proyecto = "{{ nombre_proyecto }}"
+descripcion_proyecto = "{{ descripcion_proyecto }}"
+proposito = "{{ proposito }}"
+ambiente = "{{ ambiente }}"
+
+nombre_vpc = "{{ nombre_vpc }}"
+region     = "{{ region }}"
+ip_rango   = "{{ ip_rango }}"
+droplets = {
+
+{% for vm in droplets %}
+  work1 = {
+    hostname = "{{ vm.hostname }}"
+    recursos = "{{ vm.recursos }}"
+    region   = "{{ vm.region }}"
+    so       = "{{ vm.so }}"
+  },
+{% endfor %}
+}
+
+usuarios = [
+{% for usuario in usuarios %}
+  {
+    nombre = "{{ usuario.nombre }}"
+    desc   = "{{ usuario.descripcion }}"
+    grupo  = "{{ usuario.grupo }}"
+    pass   = "{{ usuario.pass }}" 
+    sudo   = "{{ usuario.sudo }}" 
+    ssh_key = "{{ usuario.ssh_key }}" 
+  },
+{% endfor %}
+]
+
+paquetes = [
+{% for paquete in paquetes %}
+    "{{ paquete }}",
+{% endfor %}
+]
+
+actualizar = {{ actualizar | lower }}
+
+ssh_key = "{{ ssh_key }}"
+
+aprovisionamiento = "{{ aprovisionamiento }}" 
+
+nombre_fw = "{{ nombre_fw }}"
+
+reglas_firewall = [
+  {
+  tipo = "inbound"
+  protocolo = "tcp"
+  puertos = "22"
+  origen = ["{{ publica }}"]
+  },
+{% for regla in reglas_firewall %}
+  {
+  tipo = "{{ regla.tipo }}"
+  protocolo =  "{{ regla.protocolo }}"
+  puertos = "{{ regla.puertos }}"
+  origen = ["{{ regla.origen }}"]
+  },
+{% endfor %}
+]

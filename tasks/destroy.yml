@@ -1,0 +1,73 @@
+---
+- block:
+  - name: Destruir & Revertir | Se elimina conexión del tunel 
+    nmcli:
+      conn_name: tun0
+      state: absent
+
+  - name: Destruir & Revertir | Se recolecta fact en especifico
+    setup:
+      gather_subset:
+        - '!all'
+        - '!min'
+        - network
+    async: 100
+    poll: 1
+
+  - name: Destruir & Revertir | Se captura interface principal
+    set_fact:
+      iface_main: "{{ ansible_default_ipv4.interface }}"
+
+  - name: Destruir & Revertir | Se encuentra su archivo de configuración
+    find:
+      paths: /etc/NetworkManager/system-connections
+      contains: "{{ iface_main }}"
+      file_type: file
+      read_whole_file: true
+      recurse: true
+    register: content
+
+  - name: Destruir & Revertir | Se captura archivo principal de la interface
+    set_fact:
+      iface_file_main: "{{ content.files | map(attribute='path') | join }}"
+
+  - name: Destruir & Revertir | Se remueve ruta temporal del archivo de configuración
+    lineinfile:
+      path: "{{ iface_file_main }}"
+      line: "routes1={{ server }},{{ ansible_default_ipv4.gateway }}"
+      state: absent
+
+  - name: Destruir & Revertir | Se elimina el servicio que establece la conexión del tunel 
+    file:
+      path: /etc/systemd/system/ssh-tunnel.service
+      state: absent
+    notify: local 
+
+  - meta: flush_handlers
+
+  - name: Destruir & Revertir | Se refresca conexión principal
+    script: ./roles/configure_ssh_vpn/files/refrescar_conexion.sh {{ iface_main }}
+    args:
+      executable: /bin/bash 
+
+  delegate_to: "{{ cliente }}"
+
+- block:
+  - name: Destruir & Revertir | Se destruyen recursos creados con terraform
+    terraform:
+      project_path: crear_recursos/
+      state: absent
+      targets:
+        - module.creacion_droplet
+        - module.reglas_firewall
+
+  - name: Destruir & Revertir | Se destruyen recursos creados con terraform
+    file:
+      path: crear_recursos/terraform.tfvars
+      state: absent
+
+  delegate_to: localhost
+  connection: local
+  become: false
+  run_once: true
+...

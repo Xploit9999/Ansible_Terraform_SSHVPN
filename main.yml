@@ -1,0 +1,54 @@
+---
+- name: Creación y configuración de SSHVPN en DigitalOcean (Ansible / Terraform)
+  hosts: localhost
+  gather_facts: false
+  vars:
+    crear: true
+  pre_tasks:
+
+  - name: Creación VPN Ansible - Terraform | Crear componentes en DigitalOcean con Terraform
+    include_tasks: tasks/crear_droplet.yml
+    when: crear | bool
+
+  - add_host:
+      name: "{{ server }}"
+      groups: main
+      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+    when: server is defined
+
+  - set_fact:
+      target: "{% if server is defined %}main{% else %}localhost{% endif %}"
+
+- name: Configuración de SSHVPN 
+  hosts: "{{ hostvars['localhost']['target'] }}"
+  become: true
+  vars:
+    eliminar: false
+    crear: true
+  vars_files:
+    - config_vars/vars.yml
+  gather_facts: false
+  tasks:
+
+  - name: Creacion VPN Ansible - Terraform | Se invoca rol para configuración del SSHVPN
+    import_role:
+      name: configure_ssh_vpn
+    when: crear | bool
+    vars:
+      tun_name: "{{ __tun_name }}"
+      tun_ip_server: "{{ __tun_ip_server }}"
+      tun_ip_client: "{{ __tun_ip_client }}"
+      ssh_user: "{{ __ssh_user }}"
+      cliente: "{{ __cliente }}"
+      server: "{{ inventory_hostname }}"
+
+  post_tasks:
+
+  - name: Creación VPN Ansible - Terraform | Destruir infra creada y revertir configuraciones.
+    include_tasks: tasks/destroy.yml
+    when: eliminar | bool
+
+  handlers:
+
+  - import_tasks: handlers/main.yml
+... 

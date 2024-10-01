@@ -1,0 +1,14 @@
+---  
+- name: Recargar systemd
+  systemd:
+    daemon_reload: true
+  listen: local
+  delegate_to: "{{ cliente }}"
+
+- name: Reiniciar servicio de NetworkManager
+  systemd:
+    name: NetworkManager
+    state: restarted
+  listen: local
+  delegate_to: "{{ cliente }}"
+... 
