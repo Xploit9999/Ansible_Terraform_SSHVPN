@@ -1,0 +1,45 @@
+# Asignacion valores para variables del VPC
+
+nombre_vpc = "mi-vpn-vpc-test"
+region     = "nyc3"
+ip_rango   = "10.10.50.0/24"
+
+# Asignacion valores para variables del/os droplet(s)
+#
+droplets = {
+
+  work1 = {
+    hostname = "VPN-master"
+    recursos = "s-1vcpu-1gb"
+    region   = "nyc3"
+    so       = "centos-stream-9-x64"
+  },
+
+}
+
+usuarios = [
+  {
+    nombre = "yagami"
+    desc   = "Usuario Automatizacion"
+    grupo  = "sysadmin"
+    pass   = "$6$XGPXU9OG5aldbR6p$vAXFSTFNdM12pOGwAebcEtTgFFgWd1CnUeDCEG517hETyLSQLCGR1gE9ehfzmF3eB8ifDMqzASi6ntx13zeou0"
+    sudo   = "ALL=(ALL) NOPASSWD:ALL"
+    ssh_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDasBkwtFVr1RfC+kyylshSU0NhtyJovWJ3NW0b581kYlFafxMIgJJj6kMW4S6A+bME0m7J1Qjmvj6VFTwqYehAodTf1IVWfniVA51Bf1G7oBlFdVQagbCqn8/FrZhRrbX2B7ZNkE0ELniQt3ppr2/bvlppsAbRvR6m3tv0ipjCfvKBILSvlzxiJadVohNBzWvKilauC1NXYfL3ZO/lrta4fyOCDAdoR3plpPDzm6ISrIziqLIJDj+MKRFhmfAPJmmOOk8VrD0Tv6Mijmdl6CvGNL+KCdN4uP4m7l9kaOVdNTSPrb3viZUkTw4u39h10I26bt48vdnWffAmQIx+k7/Lt9uZHUzk4Wwd1srUFPT6o7pKTQmXxR51yAPp5e+GQXmp6UbiYcBbfdq25+jvcMe3nq59rV72K+1PX8E4gSjyD0lhboHJ7SWIWRW2wDpYzKRSg/UcmdgOuDwSuKHOLNNl3bkMqJBZoPcXOUHk1eT/XnUAOKcTud1jvt6WdV1+0VE= yagami@We-PvP-IRL"
+  },
+]
+
+paquetes = [
+  "iotop",
+  "perf",
+  "sysstat",
+  "firewalld"
+]
+
+actualizar = true
+
+ssh_key = "Experimental"
+
+# Asignacion valores para variables de firewall
+nombre_fw = "mi-firewall"
+
+aprovisionamiento = "provisioning.yaml.tpl"
