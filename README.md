@@ -107,7 +107,7 @@ Contiene las plantillas que se utilizan para generar archivos de configuración 
 
 ## Uso
 
-1. **Configuración**: Asegúrate de que todas las variables necesarias estén configuradas en los archivos de variables.
+1. **Configuración**: Asegúrate de que todas las variables necesarias estén configuradas en el archivo **`config_vars/vars.yml`**, ese es el archivo principal para la generación del .tfvars y configuraciones de la VPN.
 2. **Ejecución**: Puedes ejecutar el playbook principal usando Ansible:
 ```bash
    ansible-playbook main.yml -k -K  # Se debe de ejecutar con privilegios.
